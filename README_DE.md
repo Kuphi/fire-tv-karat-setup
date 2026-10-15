@@ -1,372 +1,280 @@
-# Fire TV karat – zweisprachiges Setup-Paket
+# Fire-TV-karat-Setup
+
+Root, Google Play/microG, Emotn Launcher und ausgewählte TV-Apps auf unterstützten karat-Fire-TV-Sticks einrichten. Mit deutscher und englischer Oberfläche sowie optionalem Update auf Fire OS 8.1.8.2.
 
 [English](README.md) · [Deutsch](README_DE.md)
 
-## Sprache wählen
+## Empfohlener Schnellstart
 
-Unter Windows `00_setup.bat`, unter Linux `bash 00_setup.sh` verwenden. Vor dem Setup oder der Installation von Abhängigkeiten **1 English** oder **2 Deutsch** wählen. Alle ausgewählten Phasen übernehmen diese Sprache. Die einzelnen Phasenstarter und Python-Einstiege bieten dieselbe Auswahl.
+> **Vor dem Start: Fire OS 8.1.5.8 oder älter**
+> Das Entfernen des Werbebanners während dieses Setups kann auf diesen Versionen die obere Reihe der Fire-TV-Einstellungen abschneiden. Das ist nicht auf den 4K Plus beschränkt; es kann jedes unterstützte Gerät mit 8.1.5.8 oder älter betreffen. Für eine neue Einrichtung **`ALL U`**, für eine bestehende Einrichtung **`U`** wählen, um auf Fire OS 8.1.8.2 zu aktualisieren. Im gemeldeten Fall hat dieses Update das Problem behoben.
 
-Mit `--lang en` oder `--lang de` wird die Abfrage übersprungen. Ohne interaktive Eingabe gilt Englisch. `FIRE_TV_LANG=en` oder `FIRE_TV_LANG=de` legt ebenfalls die Sprache fest; ein ausdrückliches `--lang` hat Vorrang.
+1. **Das vollständige Setup-ZIP** in einen Ordner auf dem PC entpacken. Falls du außerdem `packages.zip` hast, dessen Inhalt nach `packages/` entpacken. Richtig ist `packages/root/`, nicht `packages/packages/root/`. Fehlende Dateien können auch während des Setups heruntergeladen werden.
+2. **Einen unterstützten Fire TV Stick per USB anschließen**, für stabile Stromversorgung sorgen, ADB-Debugging aktivieren und die Autorisierung am TV bestätigen. Auf dem PC mindestens **12 GiB freien Speicher** für Backups bereithalten.
+3. **Im entpackten Ordner das Hauptskript starten:**
 
-```bash
-bash 00_setup.sh --lang de
-bash 00_setup.sh --lang en --preview-only --steps ALL
-```
+   | Linux | Windows |
+   |---|---|
+   | `bash 00_setup.sh` | `00_setup.bat` starten oder in PowerShell `.\00_setup.bat` eingeben |
 
-Windows:
-```text
-00_setup.bat --lang de
-00_setup.bat --lang en
-```
+4. **Sprache und anschließend den Ablauf wählen:**
 
-Beide Sprachen verwenden dieselbe Engine, Checkpoints, Backups und Ablaufpläne. Ein Sprachwechsel startet abgeschlossene Arbeiten nicht erneut. Beim Aktualisieren Runtime, PC-Backups und Packages behalten. Alte deutsche Logs bleiben für die Wiederaufnahme lesbar. Die Standarddokumentation ist `README.md`; diese deutsche Anleitung heißt `README_DE.md`.
+   | Eingabe | Ergebnis |
+   |---|---|
+   | `ALL` | Phasen 1–5 ohne Änderung der Fire-OS-Version |
+   | `ALL U` | Phasen 1–5; Update auf 8.1.8.2 wird in Phase 2 integriert |
+   | `U` | Bestehende Einrichtung später aktualisieren, ohne Phasen 3–5 erneut auszuführen |
+
+5. **Den Hinweisen im Terminal und am TV folgen.** Magisk Direct Install bei Aufforderung abschließen und danach im Terminal `RESUME` eingeben. EmotnUI-Berechtigungen mit der Fernbedienung erteilen. Während Schreibvorgängen USB und Strom angeschlossen lassen. Nach einer Unterbrechung dasselbe Hauptskript im selben Ordner erneut starten.
 
 
-Stand: 2026-10-14. Enthält Skripte und fünf mitgelieferte Helper-APKs.
-Keine persönlichen Logs, Checkpoints, Seriennummern, Backups, Konten oder VPN-Konfigurationen sind enthalten.
+Root-/Unlock-Schreibvorgänge können das Gerät dauerhaft beschädigen. Das Backup entsteht nach dem Unlock und schützt nicht vor einem fehlgeschlagenen Unlock. Vor Beginn die [Kompatibilität](#kompatibilität) prüfen.
 
-## Optionales Firmwareupdate: U
+## Ablauf auswählen
 
-Die Optionen **1–5** bleiben erhalten. **ALL U** ergänzt Fire OS **8.1.8.2**: Das Update wird vor Google/microG in Phase 2 integriert. Firmware, Post-OTA und Magisk werden in einer TWRP-Sitzung geflasht. **U** funktioniert auch allein. Zuvor aktive Vector-/microG-Module werden erst nach Preinit- und Verifier-Prüfungen wiederhergestellt. Zum Fortsetzen einfach dasselbe Hauptmenü starten.
+Das Hauptmenü sortiert die Auswahl in die erforderliche Reihenfolge und entfernt Duplikate. Leerzeichen oder Kommas verwenden, etwa `1 2 3`, `3,4,5` oder `U 3 4`. Bei einem Fehler werden spätere Phasen nicht gestartet.
 
-Ablauf, Checkpoints, Firmware-Hash und Prüfgrenzen stehen in [UPDATE_DE.md](UPDATE_DE.md). Vorschau: `bash 00_setup.sh --lang de --preview-only --steps "ALL U"` (Windows: `00_setup.bat` mit denselben Optionen).
-
-## Hauptmenü und Reihenfolge
-
-Linux: `bash 00_setup.sh` · Windows: `00_setup.bat`.
-Im Menü z.B. **1,2,3**, **3,4,5** oder **ALL** wählen. Die Auswahl wird dedupliziert und sortiert.
-Das Menü bindet die tatsächlichen Phasen an denselben USB-Stick. Bei einem Fehler startet es keine weitere Phase.
-
-| Phase | Linux-Starter | Aufgabe |
+| Option | Aufgabe | Linux-Starter |
 |---|---|---|
-| 00 | `00_setup.sh` | Hauptmenü / Auswahl |
-| 01 | `01_temporary_root_and_disable_ota.sh` | temporäres Root und OTA-Sperre |
-| 02 | `02_permanent_root_magisk.sh` | Unlock, einmaliges Backup, Post-OTA, Magisk |
-| 03 | `03_google_play_and_microg.sh` | Google Play, microG, Zygisk Next, Vector, FakeGApps |
-| 04 | `04_emotn-launcher-setup.sh` | Emotn Launcher |
-| 05 | `05_install_apps_and_optimize.sh` | Apps installieren und optimieren |
+| 1 | Temporäres Root und OTA-Sperre | `01_temporary_root_and_disable_ota.sh` |
+| 2 | Unlock, einmaliges Backup, Post-OTA und permanentes Root mit Magisk | `02_permanent_root_magisk.sh` |
+| U | Optionales Update auf Fire OS 8.1.8.2; bei gemeinsamer Auswahl mit Phase 2 kombiniert | Hauptmenü |
+| 3 | Google Play, microG, Zygisk Next, Vector und FakeGApps | `03_google_play_and_microg.sh` |
+| 4 | Emotn Launcher, Helper und Vector-Zuordnung | `04_emotn-launcher-setup.sh` |
+| 5 | Apps auswählen, installieren und optimieren | `05_install_apps_and_optimize.sh` |
 
-Zu jedem Starter gibt es eine native Windows-`.ps1` und `.bat` mit gleichem Namen.
-Auch die Phasenstarter können direkt aufgerufen werden.
+Zu jedem nummerierten Starter gibt es Windows-`.bat` und `.ps1`. **Empfohlener Einstieg bleibt immer `00_setup`**, auch zum Fortsetzen. Phase 3 benötigt permanentes Root; Phase 4 das eingerichtete Framework/Vector.
+
+### Optionales Update: U
+
+`ALL` bedeutet Phasen 1–5 und enthält **kein** Firmwareupdate. `ALL U` installiert Firmware, Post-OTA und Magisk in einer TWRP-Sitzung vor Google/microG; ein Android-Start dazwischen entfällt.
+
+Du kannst **später nur `U` auswählen**. Vorhandene geprüfte Unlock- und PC-Backup-Checkpoints werden wiederverwendet. Zuvor deaktivierte Module bleiben deaktiviert. Zuvor aktive Vector-/microG-Promotion-Module werden erst nach Preinit- und Verifier-Prüfungen wiederhergestellt. Phasen 3–5 werden nicht wiederholt.
+
+Ziel ist **Fire OS 8.1.8.2 / RS8182.3811N / 0032548774788**. Bereits installiertes 8.1.8.2 wird nicht erneut geflasht; neuere Firmware nicht heruntergestuft. Das durch dieses Setup installierte Amonet-karat-TWRP verwenden, keine fremde Recovery mit lediglich gleicher Versionsanzeige.
+
+[UPDATE_DE.md](UPDATE_DE.md) beschreibt Reihenfolge, Firmware-Hash, Wiederaufnahme und Prüfgrenzen. Ein manueller Firmwarewechsel außerhalb dieses Ablaufs wird nicht durch automatisches Umschreiben alter Checkpoints übernommen.
+
+## Sprache und Kommandozeilenoptionen
+
+Vor Setup und Installation von Abhängigkeiten **1 English** oder **2 Deutsch** wählen. Alle ausgewählten Phasen übernehmen die Sprache. Beide Sprachen verwenden dieselben Checkpoints und Backups.
 
 ```bash
-bash 00_setup.sh --steps 1,2,3 --dry-run
-bash 00_setup.sh --steps ALL --preview-only
-bash 03_google_play_and_microg.sh --dry-run
+bash 00_setup.sh --lang en
+bash 00_setup.sh --lang de --steps "ALL U"
+bash 00_setup.sh --steps 5 --apps "1 2 6"
 ```
 
-01 verlangt `ROOT` als Bestätigung, wenn temporäres Root hergestellt werden muss.
-Es entsperrt keinen Bootloader und macht kein Backup. OTA und OTA-Override werden deaktiviert und geprüft.
-Temporäres Root geht bei Neustart verloren; deshalb wird es nicht als dauerhaft erledigt übersprungen.
-02 kann bei Bedarf temporäres Root selbst herstellen und verlangt vor Unlock weiterhin `UNLOCK`.
-03 benötigt bereits permanentes Root mit Magisk 30.7; 04 benötigt das eingerichtete Framework/Vector.
-Einmaliges Backup und vorhandene Flash-Checkpoints bleiben erhalten; kein zweites Backup beim Google-Schritt.
+Windows akzeptiert dieselben Optionen:
 
-Immer das vollständige Paket entpacken. Die Starter finden ihren Hauptordner auch aus einem anderen Arbeitsverzeichnis.
-Bei genau einem autorisierten USB-Gerät wird dessen Seriennummer automatisch erkannt.
-Bei mehreren Geräten: `--serial SERIENNUMMER` ergänzen; PowerShell/BAT verwenden dieselben Optionen.
-Mit `--help` zeigt jeder Python-Einstieg seine Optionen. `--prepare-only` gibt es für die Root-Phasen und Emotn (Dateien prüfen/herunterladen, keine Geräteänderungen).
-Checkpoint-Dateien und Logs entstehen erst bei Benutzung in `karat-automation/runtime`; beim Weitergeben NICHT mitpacken.
+```powershell
+.\00_setup.bat --lang en
+.\00_setup.bat --lang de --steps "ALL U"
+```
 
-## Abhängigkeiten und Installation
+Bei mehreren angeschlossenen USB-Geräten `--serial SERIENNUMMER` ergänzen. Andernfalls wird genau ein autorisierter USB-Stick automatisch erkannt. `--help` zeigt Optionen. `FIRE_TV_LANG=en` oder `FIRE_TV_LANG=de` setzt eine Vorgabe; `--lang` hat Vorrang. Ohne interaktive Eingabe gilt Englisch.
 
-Python **>=3.10** (nur Standardbibliothek; kein pip für den normalen Ablauf), Android Platform Tools/ADB,
-USB-Datenkabel und autorisiertes USB-Debugging, stabile Stromversorgung, Internet für fehlende Downloads.
-Vor dem Unlock mindestens 12 GiB freien PC-Speicher für die Backups vorsehen.
-Linux braucht Bash; Windows verwendet native Python-/PowerShell-/BAT-Starter, kein WSL oder Git Bash nötig.
+## Kompatibilität
 
-Die Linux-Starter installieren fehlendes Python/ADB über `tools/install-dependencies.sh`:
+| Fire TV Stick | Modellkennung |
+|---|---|
+| 4K Max, 2. Generation | `AFTKRT` |
+| 4K, 2. Generation | `AFTKM` |
+| 4K Plus | `AFTMA08C15` |
+
+Das Gerät muss sich als **`karat`** melden und einer exakten Kombination aus Build, Incremental-Version und Kernel in `SUPPORTED` in [karat.py](karat-automation/karat.py) entsprechen. Eine passende Modellkennung allein genügt nicht. Unbekannte Firmwareprofile bleiben gesperrt.
+
+Manuelles Firmwareupdate und Behebung des Einstellungsfehlers wurden auf einem 4K Plus erfolgreich durchgeführt. Automatische Tests simulieren ADB; sie belegen keine Hardwareprüfung jedes Modells mit jeder Firmware. Sticks der ersten Generation, 4K Select und andere Geräteplattformen gehören nicht zu diesem Ablauf. Ein automatisches Bootrom-/Unbrick- oder Downgrade-Verfahren ist nicht enthalten.
+
+## Entwicklung und gemeldete Gerätedurchläufe
+
+Projekt: [Kuphi/fire-tv-karat-setup](https://github.com/Kuphi/fire-tv-karat-setup/). Dies ist ein unabhängiges, KI-unterstütztes Hobbyprojekt, entwickelt mit ChatGPT-Unterstützung durch Sol- und Astra-Modelle. Eine Unterstützung oder Freigabe durch Amazon, Emotn, OpenAI oder die Upstream-Projekte wird nicht behauptet.
+
+Nach Angaben des Projektautors vom **15. Oktober 2026**:
+
+| Gemeldet von | Gerät | Gerootete Geräte |
+|---|---|---|
+| Projektautor | Fire TV Stick 4K Max, 2. Generation | 5 |
+| Projektautor | Fire TV Stick 4K Plus | 2 |
+| Weiterer Tester | Fire TV Stick 4K Plus | 1 |
+
+Bei diesen acht Durchläufen wurden keine dauerhaft unbrauchbar gewordenen Geräte gemeldet. Es handelte sich um Entwicklungsdurchläufe mit verschiedenen Skriptständen, nicht um einen kontrollierten Test jeder Phase der aktuellen Version. Daraus lassen sich weder eine Fehlerquote noch eine Sicherheitsgarantie oder die Prüfung jeder aufgeführten Geräte-/Firmwarekombination ableiten. Der Code enthält Prüfungen und Checkpoints, wurde aber weder professionell sicherheitstechnisch noch rechtlich geprüft. Fehler können Datenverlust oder dauerhafte Geräteschäden verursachen; gesetzliche Rechte und Haftung, die rechtlich nicht ausgeschlossen werden können, bleiben unberührt.
+
+Die zugrunde liegenden Exploit-, Unlock-, Recovery- und Root-Techniken stammen von ihren ursprünglichen Entwicklern, unter anderem den Projekten GhostLock/amonet/TWRP, Magisk, Zygisk Next, Vector, FakeGApps und microG. Dieses Repository koordiniert deren Werkzeuge; es beansprucht nicht, diese Techniken entwickelt zu haben. Upstream-Links stehen in [SOURCES.md](SOURCES.md). Namensnennung ersetzt weder die Einhaltung der jeweiligen Lizenz noch eine gegebenenfalls notwendige Erlaubnis.
+
+## Abhängigkeiten
+
+Das normale Setup benötigt **Python ab 3.10**, **ADB / Android Platform Tools**, eine USB-Datenverbindung, autorisiertes ADB-Debugging, stabile Stromversorgung und Internetzugang für fehlende Downloads. Vor dem Unlock mindestens **12 GiB freien PC-Speicher** bereithalten. Für den normalen Ablauf sind keine pip-Pakete nötig.
+
+### Linux
+
+Fehlendes Python/ADB wird über `tools/install-dependencies.sh` installiert; dafür kann `sudo` erforderlich sein.
 
 | Distribution | Paketmanager | Pakete |
 |---|---|---|
-| Ubuntu / Debian | apt-get | python3, adb, curl, wget, unzip, ca-certificates |
-| Fedora | dnf | python3, android-tools, curl, wget, unzip, ca-certificates |
-| Arch / darauf basierende Distributionen | pacman | python, android-tools, curl, wget, unzip, ca-certificates |
+| Ubuntu / Debian | `apt-get` | `python3`, `adb`, `curl`, `wget`, `unzip`, `ca-certificates` |
+| Fedora | `dnf` | `python3`, `android-tools`, `curl`, `wget`, `unzip`, `ca-certificates` |
+| Arch und Derivate | `pacman` | `python`, `android-tools`, `curl`, `wget`, `unzip`, `ca-certificates` |
 
-Dazu kann sudo erforderlich sein. Sehr alte Distributionen mit Python <3.10 benötigen ein neueres Python.
-Bei `no permissions` Linux-USB-/udev-Regeln der Distribution prüfen; ADB nicht blind dauerhaft als root starten.
+Bash wird benötigt. Auf älteren Distributionen muss gegebenenfalls separat ein neueres Python installiert werden. Bei `no permissions` die USB-/udev-Regeln prüfen; ADB auf dem PC nicht dauerhaft als Root ausführen, um das Problem zu umgehen.
 
-Windows: Python 3.13 wird bei Bedarf über winget installiert. Falls winget fehlt, Python selbst von python.org
-installieren (PATH aktivieren). ADB wird aus Googles offizieller Platform-Tools-ZIP unter `tools/platform-tools` entpackt.
-Zum Download wird vorhandenes **wget.exe** bevorzugt; sonst PowerShell `Invoke-WebRequest`.
-Der PowerShell-Alias `wget` ist kein GNU wget und wird nicht dafür verwendet.
-Ein passender USB-/ADB-Treiber ist bei Bedarf separat erforderlich; das Skript installiert keine beliebigen Treiber.
-Nach erstmaliger Python-Installation kann ein neues Terminal nötig sein.
-Native Windows-Hardwaretests wurden hier nicht ausgeführt; die plattformspezifischen Codepfade wurden offline geprüft.
+### Windows
 
-Optionale externe Recovery-Werkzeuge aus amonet sind NICHT Bestandteil des normalen Ablaufs.
-Deren Python-Abhängigkeiten (u.a. pyserial, pycryptodome, PyYAML, future, iso8601) gelten nur bei separater Nutzung
-und müssen nach den jeweiligen Upstream-Anweisungen installiert werden. Keine alten requirements global installieren.
+Native BAT-/PowerShell-/Python-Starter sind enthalten; WSL und Git Bash sind nicht erforderlich.
 
-## Geräte und Firmware
+- Fehlendes Python wird über `winget` mit dem Paket für Python 3.13 installiert. Ohne winget Python von [python.org](https://www.python.org/downloads/windows/) installieren und PATH aktivieren.
+- Fehlendes ADB wird aus Googles offiziellem Platform-Tools-ZIP nach `tools/platform-tools` geladen.
+- Für diesen Download wird vorhandenes `wget.exe` bevorzugt; sonst PowerShell `Invoke-WebRequest`. Der PowerShell-Alias `wget` ist kein GNU wget.
+- Einen passenden USB-/ADB-Treiber bei Bedarf separat installieren. Nach der Python-Installation kann ein neues Terminal nötig sein.
 
-| Modell | Kennung | Status dieses Pakets |
-|---|---|---|
-| Fire TV Stick 4K Max (2nd Gen) | AFTKRT | bisheriger Ablauf, mit Offline-Regressionstests |
-| Fire TV Stick 4K (2nd Gen) | AFTKM | Gerätekennung ergänzt; keine eigenen Hardwaretests |
-| Fire TV Stick 4K Plus (2025) | AFTMA08C15 | Gerätekennung ergänzt; keine eigenen Hardwaretests |
+Separat verwendete Upstream-amonet-Recovery-Werkzeuge haben eigene Abhängigkeiten. Sie sind für diesen normalen Ablauf nicht nötig; bei eigenständiger Verwendung die Upstream-Anleitung beachten.
 
-TWRP-Upstream nennt alle drei als karat/MT8696-Geräte. Die Erkennung akzeptiert ausschließlich `karat`,
-diese drei Modellkennungen und die EXAKTEN Build-/Incremental-/Kernel-Kombinationen in `SUPPORTED` in `karat.py`.
-Die vorhandenen 15 Firmwareprofile wurden nicht um unbestätigte Builds erweitert. Die GhostLock-Dokumentation
-beschreibt den karat-Target als 4K Max; die Freigabe aller Modellkennungen ist deshalb kein Beleg für
-hardwaregetestete Root-Unterstützung jeder Firmware auf jedem Modell. Ein unbekanntes Profil bleibt gesperrt.
-4K Select, erste Generation, andere SoCs und Android-/Vega-Varianten sind NICHT freigegeben.
-Kein Downgrade, keine automatischen Bootrom-/Unbrick-Versuche.
+## Installationsdateien und Downloads
 
-## Benötigte externe Installationsdateien
+Das Setup-ZIP enthält Skripte und **fünf Helper-APKs**. Root-ZIPs, Stock-Firmware, Magisk-APK, EmotnUI und Google-APKs werden separat bereitgestellt oder bei Bedarf heruntergeladen.
 
-Im Upload fehlten die Root-ZIPs, EmotnUI und mehrere Drittanbieter-APKs. Sie sind deshalb nicht in diesem ZIP enthalten.
-`config/required-files.json` listet Pfade, Versionen, gepinnte SHA256 und vorhandene Download-URLs.
-Die drei Root-ZIPs und EmotnUI haben jetzt die bereitgestellten Download-URLs. Bekannte HTTPS-URLs werden von den jeweiligen Phasen automatisch verwendet; nach dem Download werden Archiv, Manifest und vorhandene gepinnte SHA256 geprüft. Die neuen URLs konnten hier nicht durch einen tatsächlichen Download verifiziert werden. Fehlende Dateien ohne URL selbst bereitstellen;
-Die echte `config/sources.local.json` ist bereits enthalten. Sie enthält dieselben verfügbaren Standardlinks wie `FILES`; Änderungen sind optional. Die Example-Datei dient nur als Vorlage.
-Gepinnte Hashwerte dürfen nicht mit anderen Versionen überschrieben werden.
+- [config/required-files.json](config/required-files.json): erwartete Pfade, URLs und vorhandene festgelegte Hashes.
+- [config/sources.local.json](config/sources.local.json): enthaltene Standardquellen; Bearbeitung ist optional.
+- [SOURCES.md](SOURCES.md): Upstream-Projekte und Quellen.
 
-Benötigte Dateien (Root-ZIPs/EmotnUI werden bei Bedarf über die eingetragenen Links heruntergeladen):
-- `packages/root/amonet-karat-v1.3.0.zip`
-- `packages/root/ghostlock-karat-v1.0.4.zip`
-- `packages/root/post-ota-karat-v1.0.0.zip`
-- `packages/emotn/EmotnUI.apk`
-- `packages/google-play/play-store-tv.apk` (TV-Variante `com.android.vending`, Version 52.0.20-24): APKMirror-Seite aus `config/required-files.json` im Browser öffnen und die APK hier ablegen. Als Standard ist die dauerhafte APKMirror-Versionsseite hinterlegt. Der Downloader löst die öffentlichen Downloadknöpfe mit frischen Schlüsseln, einer normalen Cookie-Sitzung und den passenden Referer-Angaben auf. Keine alten Downloadschlüssel werden gespeichert. Die fertige APK wird per SHA256 und Manifest geprüft.
+Passende vorhandene Dateien werden wiederverwendet. Archive, APK-Manifeste und vorhandene festgelegte Hashes werden geprüft. Keinen Hash einer anderen Version einsetzen, um eine abweichende Datei akzeptieren zu lassen.
 
-Magisk 30.7, Zygisk Next 1.5.0, Vector 2.2, FakeGApps 6.6, microG 0.3.15.250932,
-microG Installer Revived Again 1.1.2 haben Downloadquellen im Skript.
-Die Root-ZIPs wurden nicht aus fremden APK-/ZIP-Portalen nachbeschafft.
+### packages.zip verwenden
 
-## Ablauf und Bestätigungen
-
-02 fordert `UNLOCK` vor dem Root-/Unlock-Versuch. GhostLock versucht maximal zweimal temporäres Root,
-jeweils nach geprüftem Neustart. Bootloader-/IDME-/Flash-Schreibvorgänge werden niemals automatisch wiederholt.
-Root kann das Gerät dauerhaft unbrauchbar machen; die späteren Backups schützen nicht vor einem misslungenen Unlock.
-USB/Strom während der Schreibvorgänge angeschlossen lassen.
-
-Die vollständige Magisk-App wird lokal installiert und ihr installierter APK-Hash geprüft.
-Nach Abschluss von Direct Install im Terminal `RESUME` eingeben. Das Skript startet den Stick neu, wartet auf Android, prüft Root, Magisk 30.7 und die vollständige App und räumt danach auf. Der Reboot-Knopf in Magisk wird nicht benötigt. Auch bei älteren abgeschlossenen Phase-2-Checkpoints holt das Hauptskript diesen Neustart nach.
-Bei Bedarf folgt ein lokaler Reparaturversuch, danach eine manuelle WLAN-Installation von derselben v30.7-APK.
-`RESUME` setzt fort, `EXIT` beendet die Abfrage; Enter allein bestätigt nichts.
-In Magisk integriertes Zygisk AUS, Zygisk Next und Vector aktiv. FakeGApps ausschließlich System Framework/android zuordnen.
-microG Self-Check prüfen; Geräteregistrierung und Cloud Messaging selbst aktivieren. Konten selbst einrichten.
-
-### Verifier-Konflikt und Boot-Timeout
-
-Es geht um den **Google-Paketverifier**, nicht um die Vendor-Partition:
-`com.android.vending/com.google.android.finsky.verifier.impl.PackageVerificationReceiver`.
-Das Skript deaktiviert ihn unmittelbar nach der Google-APK-Installation, vor Promotion und direkt vor dem microG-Reboot.
-Die Ausgabe muss mit `new state: disabled` enden; exakt ein Receiver muss übrig bleiben:
-`com.amazon.adep/.nimh.receiver.PackageVerificationReceiver`.
-Der Play Store bleibt aktiviert und seine Promotion bleibt erhalten. Nach dem Boot wird erneut geprüft.
-
-Das vermindert den bekannten Konflikt, garantiert aber keinen fehlerfreien Boot: der Zustand kann sich beim Paket-Scan ändern,
-und andere Bootfehler sind möglich. Nach sechs Minuten ohne bestätigten Start erscheint eine Reparaturanleitung,
-kein automatischer weiterer Flash. Siehe `MANUAL-REPAIR_DE.md`.
-
-### Bereinigung nach den drei Root-Phasen
-
-- 01 legt keine temporären Dateien auf `/sdcard` ab. GhostLock-Dateien liegen unter `/data/local/tmp`; der noch laufende su-Daemon wird nicht gelöscht.
-- 02 entfernt Magisk-/Post-OTA-ZIPs auf `/sdcard` sowie beide eigenen TWRP-Gerätebackups erst nach Prüfung der PC-Kopien und ihrer SHA256. Fremde Backups und PC-Dateien bleiben erhalten.
-- 03 entfernt die bekannten Google-/Framework-Staging-Dateien und APK/APKM-Dateien unter `/sdcard/Download/Downloader`. Das Backup wird nicht erneut erstellt oder gelöscht.
-- Leere Verzeichnisse werden entfernt; keine pauschale Löschung fremder TWRP-Backups.
-- 04/05 enthalten keine solche Speicherbereinigung.
-
-Bei übernommenen Root-Installationen ohne verifizierte PC-Backups bleibt die Backup-Löschung gesperrt.
-Wenn eine Phase scheitert, wird ihre abschließende Bereinigung nicht ausgeführt.
-
-### Emotn und Apps
-
-04: Emotn installieren, Home-Zuordnung und Vector-Module nach Anleitung bestätigen.
-Als Wetterstadt **den eigenen Wohnort** einstellen. Emotn System Clock folgt der Fire-TV-Zeitzone und reagiert auf Änderungen. Wetterstadt und Gerätezeitzone werden nicht verändert. Keine persönlichen Städte oder Konten sind voreingestellt.
-
-05: Animationen 0.5; vorhandene Apps überspringen, fehlende installieren, danach `compile -m speed -f`.
-Netflix, YouTube, Prime Video und Disney+ werden bevorzugt im Amazon Appstore geöffnet.
-Wholphin wird nach Möglichkeit direkt aus dem offiziellen GitHub-Release installiert.
-CX verwendet eine passende lokale APK oder den Play Store. Materialious, Aurora, F-Droid und WireGuard werden überhaupt nicht eingerichtet.
-Store-Installationen selbst bestätigen, dann `RESUME`; fehlende Apps werden abschließend gemeldet.
-Emotn App Categories wird in Phase 4 mit den Launcher-Helfern installiert. In Vector aktivieren und ausschließlich Emotn UI zuordnen. Phase 5 enthält sechs Apps zur Auswahl. Der Launcher wird am Ende neu gestartet.
-
-## Prüfen und Weitergeben
-
-`python3 -m unittest discover -s karat-automation -p 'test_*.py' -v` (Windows: `py -3 -m unittest ...`).
-`SHA256SUMS` enthält die Prüfsummen des fertigen Pakets.
-Tests sind Offline-Tests mit Mock-ADB; keine echten USB-, Windows-, Flash- oder Geräteprüfungen.
-Nach Benutzung Runtime, Backups, persönliche sources.local.json und Kontodaten nicht weitergeben.
-Die fünf Helper-APKs stammen aus dem bereitgestellten Paket; ihre Hashes wurden geprüft.
-Drittanbieter-Downloads und eigene Helper unterliegen ihren jeweiligen Nutzungs-/Weitergabebedingungen.
-
-Quellen: siehe `SOURCES_DE.md`. Keine erfundene Erfolgsgarantie für Root oder Boot.
-
-## Download-Dry-Run ohne angeschlossenen Stick
-
-`--dry-run` lädt benötigte Dateien tatsächlich herunter, prüft Archive/Manifeste/Hashes und zeigt danach die simulierte Geräteausgabe.
-Vorhandene geprüfte Dateien werden wiederverwendet. Downloads und Logs werden lokal gespeichert; kein ADB und keine Geräteänderungen.
-Die Standardlinks stehen in `FILES` in `karat-automation/karat.py`; eine eigene sources.local.json ist dafür NICHT erforderlich.
-Leere URL-Einträge in älteren Konfigurationen überschreiben die Standardlinks nicht mehr.
-Bei HTTP-Fehlern nennt die Meldung jetzt die betroffene Datei.
-
-```bash
-bash 02_permanent_root_magisk.sh --dry-run
-bash 04_emotn-launcher-setup.sh --dry-run
-bash 05_install_apps_and_optimize.sh --dry-run
-```
-
-Für die reine Optik ohne Downloads/Dateien:
-```bash
-bash 02_permanent_root_magisk.sh --preview-only
-bash 04_emotn-launcher-setup.sh --preview-only
-bash 05_install_apps_and_optimize.sh --preview-only
-bash 02_permanent_root_magisk.sh --preview-only --dry-run-scenario boot-timeout
-```
-Windows: entsprechende `.bat`-Starter mit denselben Optionen verwenden. Python >=3.10 muss für diese gerätefreien Modi bereits installiert sein.
-Store-Installationen können ohne Gerät nicht durchgeführt werden; App-Dry-Run meldet sie als fehlend.
-Alle Geräteergebnisse sind simuliert, keine echte Funktionsprüfung. Download-URLs können serverseitig ablaufen oder blockiert werden.
-
-## Wenn ein Download nicht automatisch klappt
-
-HTTP 403/404, abgelaufene Links oder HTML statt APK führen jetzt zu einer gut sichtbaren manuellen Download-Abfrage.
-Das Skript zeigt Link, Dateiname und den absoluten Ablageordner in vier einfachen Schritten.
-Die Datei passend ablegen, ZIP nicht entpacken, dann `RESUME` schreiben. Die Datei wird erneut geprüft.
-Eine fehlende/falsche Datei hält die Abfrage offen. `EXIT` beendet ausdrücklich; ohne interaktive Eingabe wird eine Wiederaufnahmeanleitung ausgegeben.
-Das gilt auch beim Download-Dry-Run. Es werden keine Schutzmechanismen der Downloadseiten umgangen.
-Der Play Store wird manuell auf dieser Seite angeboten:
-https://www.apkmirror.com/apk/google-inc/google-play-store-android-tv/google-play-store-android-tv-52-0-20-release/google-play-store-android-tv-52-0-20-24-8-pr-937697325-4-android-apk-download/
-
-### Browser-Fallback bei XDA
-
-Eine direkte HTTP-Anfrage an XDA wurde mit `403` und `cdn-challenge: true` beantwortet: die Seite verlangt eine Browser-Bestätigung. Das betrifft auch curl; ein vollständig unbeaufsichtigter Download ist dann nicht verfügbar.
-Das Skript öffnet im interaktiven Terminal den Link im normalen Browser. Dort die Bestätigung durchführen und die ZIP herunterladen.
-Im normalen `~/Downloads`-Ordner speichern und `RESUME` eingeben: Die exakt benannte Datei (auch mit Browser-Suffix `(1)` etc.) wird nur bei passender gepinnter SHA256 automatisch in den Paketordner kopiert.
-Unpassende Dateien bleiben unberührt; die originale heruntergeladene Datei wird nicht gelöscht. Bei abweichendem Downloadordner weiterhin den explizit angezeigten Zielpfad verwenden.
-Es werden keine Challenge-Cookies exportiert und keine Anti-Bot-Sperren umgangen. Für vollständig offline verfügbare Root-Dateien können die drei Original-ZIPs vorab unter `packages/root` abgelegt werden.
-
-### Verifizierter Play-Store-Direktdownload (2026-10-13)
-
-Die APKMirror-Versionsseite wird ohne Browser über ihre regulären Downloadstufen aufgelöst.
-Ein Live-Download ergab 66.201.277 Bytes und SHA256
-`16625b025c342c3badb63c60ba4158291863d21fa8bb7e6b16899144ab6037b6`.
-Das APK-Manifest wurde als `com.android.vending`, VersionCode `85202008` bestätigt.
-Die Datei ist hier nur zur Verifikation heruntergeladen worden; sie wird nicht im Share-ZIP mitverteilt.
-XDA-Root-ZIPs haben weiterhin eine Browser-Challenge. Es wurde keine alternative freigegebene Direktquelle für dieselben Dateien gefunden. Diese Downloads sind nicht als repariert bestätigt.
-
-## Separates packages.zip verwenden
-
-Das Skriptpaket enthält weiterhin nur die Skripte und Helper. Das zusätzlich angebotene `packages.zip` separat herunterladen und **dessen Inhalt in den Ordner `packages` entpacken**.
-Am Ende muss die Struktur so aussehen:
+Enthält das Archiv direkt `root`, `google-play` und `emotn`, **nach `packages/` entpacken**. Enthält es bereits einen äußeren Ordner `packages`, diesen stattdessen in den Setup-Ordner entpacken.
 
 ```text
 fire-tv-karat-setup/
-  00_setup.sh (bzw. .bat)
-  packages/
-    root/amonet-karat-v1.3.0.zip
-    root/ghostlock-karat-v1.0.4.zip
-    root/post-ota-karat-v1.0.0.zip
-    root/Magisk-v30.7.apk
-    root/Magisk-v30.7.zip
-    google-play/fakegapps.apk
-    google-play/microg-installer.zip
-    google-play/microg.apk
-    google-play/play-store-tv.apk
-    google-play/vector.zip
-    google-play/zygisk-next.zip
-    emotn/EmotnUI.apk
-    emotn/helpers/ (die fünf Helper-APKs)
+├── 00_setup.sh / 00_setup.bat
+├── karat-automation/
+├── config/
+└── packages/
+    ├── root/
+    │   ├── amonet-karat-v1.3.0.zip
+    │   ├── ghostlock-karat-v1.0.4.zip
+    │   ├── post-ota-karat-v1.0.0.zip
+    │   └── Magisk-v30.7.apk
+    ├── google-play/
+    │   ├── zygisk-next.zip
+    │   ├── vector.zip
+    │   ├── fakegapps.apk
+    │   ├── microg.apk
+    │   ├── play-store-tv.apk
+    │   └── microg-installer.zip
+    └── emotn/
+        ├── EmotnUI.apk
+        └── helpers/
 ```
 
-Linux im Hauptordner:
-```bash
-mkdir -p packages
-unzip -n packages.zip -d packages
-```
-Windows PowerShell im Hauptordner:
-```powershell
-Expand-Archive -LiteralPath .\packages.zip -DestinationPath .\packages
-```
+Die einzelnen Installations-ZIPs nicht entpacken. Eine zusätzliche `Magisk-v30.7.zip` wird nicht verwendet: Das Setup nutzt die vollständige APK und benennt sie bei der Übertragung für die TWRP-Installation um. Für U kann eine vorhandene Firmware-`.bin` in `packages/root/FireOS-8.1.8.2.zip` umbenannt werden; andernfalls wird sie heruntergeladen.
 
-Diese Befehle setzen voraus, dass `packages.zip` direkt `root`, `google-play` und `emotn` enthält. Falls das ZIP bereits einen äußeren Ordner `packages` enthält, diesen direkt in den Hauptordner entpacken. **Kein `packages/packages/root` erzeugen.**
-Vorhandene Dateien haben Vorrang vor Web-Downloads. Archive, Versionen und gepinnte SHA256 werden trotzdem geprüft.
-Die optional vorhandene `Magisk-v30.7.zip` bleibt unbenutzt: das Skript verwendet die vollständige APK und benennt sie nur beim Transfer fürs Flashen um.
+### Wenn ein Download scheitert
 
-## App-Auswahl in Phase 05
+Ein fehlgeschlagener oder blockierter Download führt zu einer deutlichen Aufforderung zum manuellen Herunterladen. Sie zeigt Link, exakten Dateinamen und Zielordner. Datei herunterladen, wie angegeben ablegen und **`RESUME`** eingeben. Bei fehlender oder ungültiger Datei bleibt die Abfrage offen; **`EXIT`** beendet ausdrücklich.
 
-```bash
-bash 05_install_apps_and_optimize.sh
-```
+Bei Dateien mit festgelegtem Hash können passende Browserdownloads im üblichen `Downloads`-Ordner nach RESUME automatisch geprüft und kopiert werden. Die Originale bleiben erhalten. XDA kann eine Browserbestätigung verlangen. Der Play-Store-Downloader folgt den normalen Downloadschritten der APKMirror-Versionsseite mit frischen Schlüsseln; Serversperren oder abgelaufene Links können dennoch einen manuellen Download erfordern. Dies gilt auch im `--dry-run`.
 
-Im Menü z.B. **1 2 6** eingeben:
+## Was du am TV erledigen musst
 
-| Nummer | App | Quelle |
+| Abschnitt | Deine Aufgabe |
+|---|---|
+| Root / Update | Verlangte Bestätigung `ROOT`, `UNLOCK` oder `UPDATE` im Terminal eingeben |
+| Magisk | Bei Aufforderung **Install → Direct Install (Recommended)** abschließen; danach `RESUME` im Terminal. Den Neustart übernimmt das Skript |
+| Integriertes Zygisk | Normalerweise nichts: Ist es aus, geht Phase 3 automatisch weiter. Ist es an, öffnet das Setup Magisk und verlangt das Ausschalten; danach folgen Prüfung und Neustart |
+| FakeGApps | In Vector aktivieren und **ausschließlich System Framework / android** zuordnen |
+| microG | In der Selbstprüfung **System spoofs signature** prüfen; Geräteregistrierung und Cloud Messaging selbst aktivieren |
+| Emotn | Angeforderte Berechtigungen mit der Fernbedienung erteilen; Anzeige/Navigation prüfen; Launcher-Auswahl bei Aufforderung bestätigen |
+| Emotn-Helper | System Clock, Idle Timer und App Categories in Vector aktivieren; **ausschließlich Emotn UI** zuordnen |
+| Konten / Stores | Anmeldung und Store-Installationen selbst bestätigen |
+
+Enter allein bestätigt keine Abfrage. Magisks integriertes Zygisk ausgeschaltet lassen; Zygisk Next stellt Zygisk für dieses Setup bereit. Magisk-Preinit und die Vector-SELinux-Regeln werden vor den betreffenden Framework-Neustarts geprüft.
+
+Emotn System Clock folgt der **Zeitzone des Fire TV**, auch nach späteren Änderungen. Es erzwingt weder Berliner Zeit noch eine Gerätezeitzone. Den eigenen Wetterort einstellen; er ist von der Uhr unabhängig. Phase 4 ersetzt bei Bedarf nur den veralteten Helper mit fester Zeitzone.
+
+## Optionale Emotn-Einrichtung: Phase 4
+
+Option **4** weglassen, wenn du EmotnUI nicht möchtest. Beispielsweise `1 2 3 5 U` wählen; das Menü ordnet U trotzdem an der erforderlichen Update-Position ein. App Categories und die anderen Emotn-Helper gehören zu Phase 4 und werden mit ihr übersprungen. Phase 5 kann einen bereits installierten Emotn-Launcher weiterhin optimieren.
+
+Die Vorliebe des Autors für EmotnUI ist persönlich: Auf den verwendeten Geräten bot der Startbildschirm eine werbefreie Oberfläche und Live-Hintergründe. Das ist keine Zusage für zukünftige Drittanbieter-Versionen.
+
+Phase 4 enthält **drei Vector-Module** und **zwei separate Verknüpfungs-Apps**:
+
+| Helper | Typ | Zweck |
+|---|---|---|
+| Emotn System Clock | Vector-Modul | Der Zeitzone des Fire TV folgen, auch nach Änderungen |
+| Emotn Idle Timer | Vector-Modul | Emotns Verhalten bei Inaktivität bzw. beim Bildschirmschoner anpassen |
+| Emotn App Categories | Vector-Modul | Gruppierung ausgewählter Apps in Emotn anpassen; dadurch werden sie nicht zu Android-System-Apps |
+| FireTV Settings Bridge | Verknüpfungs-App | Zugang zu den Fire-TV-Einstellungen aus dem Launcher bereitstellen |
+| Amazon Appstore Direct | Verknüpfungs-App | Alternative Appstore-Verknüpfung anbieten, wenn der vorhandene Emotn-Eintrag nicht funktioniert |
+
+Die drei Vector-Module **ausschließlich Emotn UI** zuordnen. Settings Bridge und Appstore-Verknüpfung sind eigenständige Apps, keine zusätzlichen Vector-Module. Ihr Verhalten hängt von Launcher- und Fire-OS-Version ab.
+
+## Apps in Phase 5 auswählen
+
+| Nummer | App | Bevorzugte Quelle |
 |---|---|---|
 | 1 | Netflix | Amazon Appstore |
 | 2 | YouTube | Amazon Appstore |
 | 3 | Prime Video | Amazon Appstore |
 | 4 | Disney+ | Amazon Appstore |
-| 5 | Wholphin | offizielle GitHub-APK / Play Store |
+| 5 | Wholphin | Offizielle GitHub-APK / Play Store |
 | 6 | CX File Explorer | Play Store / passende lokale APK |
 
-`ALL` wählt alle, `NONE` nur die Animationseinstellungen/Emotn-Optimierung, `EXIT` beendet ohne Einrichtung.
-Nicht ausgewählte Apps werden weder installiert noch optimiert. Bereits installierte ausgewählte Apps werden nur optimiert.
-Die Animationseinstellungen und Emotn-Optimierung bleiben Bestandteil von Phase 05.
+`1 2 6`, `ALL`, `NONE` oder `EXIT` eingeben. Bereits installierte ausgewählte Apps werden ohne Neuinstallation optimiert; fehlende ausgewählte Apps zuerst installiert. Nicht ausgewählte Apps werden weder installiert noch optimiert.
 
-Direkt oder über das Hauptmenü:
+Phase 5 setzt immer die Animationswerte auf **0.5** und optimiert Emotn. `NONE` führt ausschließlich diese Aktionen aus. Noch fehlende Apps werden am Ende aufgelistet. Materialious, Aurora, F-Droid und WireGuard werden nicht eingerichtet. **Emotn App Categories gehört zu Phase 4**, nicht ins App-Menü.
+
+## Fortsetzen, Backups und Bereinigung
+
+Nach einer Unterbrechung **dasselbe Hauptskript im selben Ordner** starten. Der gerätegebundene Ablaufplan behält restliche Phasen, App-Auswahl und relevante Optionen. Ausdrückliches `--steps` startet eine neue Auswahl. Ein Phasenfehler sperrt spätere Phasen; unklare Flash-Schreibvorgänge werden niemals automatisch wiederholt.
+
+Beim Ersetzen der Setup-Dateien behalten:
+
+- `karat-automation/runtime/` — Checkpoints, Ablaufpläne und technische Logs;
+- `backups/` — geprüfte PC-Backups;
+- `packages/` — vorhandene Installationsdateien.
+
+Abgeschlossene geprüfte Unlock-/Backup-Stufen werden wiederverwendet. Alte Windows-Backup-Manifeste mit Backslashes bleiben lesbar; Dateien und Hashes werden weiterhin geprüft. Nur ein eng begrenzt geprüfter historischer Post-OTA-**Vorprüfungsabbruch** kann anhand seines ursprünglichen Logs automatisch wieder aufgenommen werden; ein gestarteter oder nicht nachweisbarer Flash bleibt gesperrt. `pending` nicht von Hand löschen.
+
+| Phase | Bereinigung auf dem Gerät |
+|---|---|
+| 1 | Keine temporären `/sdcard`-Dateien; laufender temporärer su-Dienst bleibt erhalten |
+| 2 | Eigene Magisk-/Post-OTA-Dateien und die beiden eigenen TWRP-Backupordner nach PC-Backup-Prüfung |
+| U | Eigene Firmware-/Root-Dateien und das zur Wiederherstellung verwendete Vector-ZIP nach Update-Prüfung |
+| 3 | Bekannte Google-/Framework-Dateien sowie APK/APKM-Dateien unter `/sdcard/Download/Downloader` |
+| 4–5 | Keine Root-Backup-/Speicherbereinigung |
+
+PC-Backups und fremde TWRP-Backups bleiben erhalten. Eine fehlgeschlagene Phase führt ihre abschließende Bereinigung nicht aus. WLAN wird nach den OTA-Sperrprüfungen aktiviert, sobald Android bereit ist; bei Fehlern erscheint eine Warnung und das Setup geht weiter. In TWRP wird WLAN nicht verändert.
+
+## Bootprobleme
+
+Der bekannte Konflikt betrifft den **Google-Paketverifier**, nicht die Vendor-Partition. Das Setup deaktiviert Googles Verifikations-Receiver nach Installation der Google-APKs, vor der Promotion und vor den betreffenden Android-Neustarts. Es verlangt `new state: disabled` und genau einen aktiven Receiver: `com.amazon.adep/.nimh.receiver.PackageVerificationReceiver`. Das Play-Store-Paket bleibt aktiviert.
+
+Nach sechs Minuten ohne bestätigten Android-Start erscheinen Diagnosehinweise. Ein Timeout allein beweist keinen Verifier-Konflikt. Ungültige `xposed_file`-Labels oder verweigerte `dex2oat`-Ausführung können stattdessen auf fehlende Magisk-Preinit-/Vector-Regeln hindeuten.
+
+USB angeschlossen lassen, Logs und Checkpoints behalten und [MANUAL-REPAIR.md](MANUAL-REPAIR.md) sowie [UPDATE_DE.md](UPDATE_DE.md) beachten. Keine Flash-Vorgänge wiederholen oder Backup-Zustände löschen, um einen Fehler zu umgehen.
+
+## Vorschau und Downloadtest
+
+Für gerätelose Modi muss Python ab 3.10 bereits installiert sein; diese Modi installieren keine Abhängigkeiten.
+
 ```bash
-bash 05_install_apps_and_optimize.sh --apps "1 2 6"
-bash 00_setup.sh --steps 5 --apps "1 2 6"
+# Nur Darstellung: keine Downloads oder Geräteaktionen
+bash 00_setup.sh --preview-only --steps "ALL U"
+
+# Echte Downloads und Dateiprüfungen; Geräteaktionen werden simuliert
+bash 00_setup.sh --dry-run --steps "ALL U"
+
+# Vorschau der ausgewählten Apps
 bash 05_install_apps_and_optimize.sh --preview-only --apps "1 2 6"
 ```
-Windows: entsprechende `.bat`-Starter mit denselben Optionen.
-Materialious, Aurora, F-Droid und WireGuard sind aus allen Einrichtungs-/Downloadlisten entfernt. `--extras` wurde entfernt; vorhandene Installationen dieser Apps werden nicht angefasst.
 
-## Übersichtliche Terminalausgabe
+Unter Windows die passenden `.bat`-Starter mit denselben Optionen verwenden. Ein Downloadtest erstellt lokale Dateien/Logs und kann manuelle Downloads verlangen. Store-Installationen benötigen weiterhin ein Gerät; simulierte Ausgabe ist kein Hardware-Funktionstest.
 
-Standardmäßig erscheinen nur Fortschritt, geprüfte Dateien, Installationsstatus, Warnungen und notwendige Eingaben.
-Ausführliche ADB-/aapt-Ausgaben, komplette SHA256 und Hostdetails stehen weiterhin im UTF-8-Detailprotokoll unter `karat-automation/runtime`.
-Der Logpfad wird angezeigt. Mit `--verbose` werden alle Details zusätzlich im Terminal ausgegeben:
-```bash
-bash 00_setup.sh --verbose
-bash 03_google_play_and_microg.sh --verbose
-```
+## Logs, Prüfung und Weitergabe
 
-Farben werden automatisch nur in einem geeigneten interaktiven Terminal aktiviert; bei Umleitung bleibt die Ausgabe ohne ANSI-Steuerzeichen.
-Mit der Umgebungsvariable `NO_COLOR=1` lassen sich Farben abschalten. Windows-Starter bieten dieselben Optionen.
-Eingabefelder zeigen deutlich die erlaubten Begriffe: `ROOT`, `UNLOCK`, `RESUME`, `EXIT` beziehungsweise die Nummern im Menü.
-Leere oder falsche Bestätigungen starten keine Schritte und halten die Abfrage offen.
-`--dry-run` und `--preview-only` zeigen im interaktiven Terminal ebenfalls die Auswahl; per `--steps`/`--apps` lässt sie sich direkt vorgeben.
+Die normale Ausgabe zeigt Fortschritt, Status und verlangte Eingaben. Downloads zeigen Datenmenge, Geschwindigkeit und bei bekannter Server-Dateigröße Prozentwerte. Lokale APK-Installationen verwenden eine Aktivitätsanzeige, weil Android keinen Installations-Prozentwert liefert. Vollständige technische Ausgabe steht im angezeigten UTF-8-Log unter `karat-automation/runtime/`. Mit `--verbose` erscheint sie zusätzlich im Terminal; `NO_COLOR=1` deaktiviert Farben.
 
-## Automatische Wiederaufnahme über das Hauptskript
+Offline-Prüfungen umfassen simuliertes ADB-Verhalten, Checkpoints, Update-Reihenfolge und beide Sprachen. Windows-Codepfade werden offline geprüft; native Windows-Ausführung und jede Geräte-/Firmwarekombination wurden nicht auf Hardware getestet. `SHA256SUMS` enthält die Release-Dateihashes. Update-spezifische Prüfgrenzen stehen in [UPDATE_DE.md](UPDATE_DE.md).
 
-Zum Fortsetzen einfach wieder das Hauptskript verwenden: Windows `00_setup.bat`, Linux `bash 00_setup.sh`.
-Es erkennt den angeschlossenen USB-Stick und speichert die gewählte Phasenfolge pro Stick in `karat-automation/runtime`. Nach einem Abbruch setzt es mit den noch offenen Phasen fort. App-Auswahl und relevante Ablaufoptionen bleiben erhalten. Abgeschlossene Unlock-/Backup-Schritte werden nicht wiederholt. Mit ausdrücklich angegebenem `--steps` kann eine neue Auswahl getroffen werden.
-
-Für einen alten Checkpoint mit `pending=postota` oder einem anderen offenen permanenten Root-Schritt erkennt das Hauptskript Phase 2 automatisch. Da alte Versionen die Menüauswahl noch nicht speicherten, werden weitere Phasen nicht erfunden oder automatisch hinzugefügt. Bei künftig gespeicherten Abläufen bleibt die komplette ursprünglich gewählte Restfolge erhalten.
-
-Die neue Version setzt `pending=postota` erst unmittelbar vor dem tatsächlichen `twrp install`, nach Backupprüfung, Byteprüfung und geprüftem Transfer. Eine gescheiterte Vorprüfung erzeugt damit keinen unklaren Flash-Checkpoint mehr.
-
-Ein altes `pending=postota` kann aus einem vollständigen, zum selben Stick gehörenden Vorprüfungs-Abbruchlog der bekannten deutschen Version vom 2026-10-13 16:06:40 wieder aufgenommen werden. Das Hauptskript sucht dieses frühere Log automatisch im Runtime-Ordner. Es muss ein ausdrücklicher Abbruch protokolliert sein, ohne gestarteten Installationsbefehl. TWRP und PC-Backups werden geprüft; vor dem Zurücksetzen wird der Checkpoint gesichert. Post-OTA wird nicht als erledigt markiert: seine Vorprüfungen laufen erneut. Ein unverändert falscher Bytecheck muss weiterhin untersucht werden.
-
-Ein tatsächlich gestarteter Flash, fehlende/abgeschnittene Logs oder unbekannte Skriptversionen werden nicht automatisch wiederholt. Ein Diagnose-Log mit abgeschlossenen Backups allein beweist keinen erfolgreichen Post-OTA-Schritt. Die Ausgabe nennt nach Möglichkeit das frühere Fehlerlog und den ursprünglichen Fehler. `Pending` nicht von Hand löschen.
-
-Neue Dateien über die vorhandene Installation entpacken; `karat-automation/runtime`, PC-Backups und `packages` behalten. Bei mehreren Geräten `--serial SERIENNUMMER` ergänzen. Die Wiederaufnahme garantiert keinen erfolgreichen Post-OTA-Flash bei einem bislang unbekannten ursprünglichen Fehler.
-
-## Windows-Backup-Pfade
-
-Ältere Windows-Versionen speicherten relative Pfade in `verified.json` mit Backslashes. Die Prüfung auf vollständige Boot-/Data-/System-Backups erwartete dagegen Schrägstriche. Diese Version akzeptiert beide Schreibweisen und schreibt neue relative Backup-Pfade mit `/`. Vorhandene Manifeste werden nicht überschrieben; Dateien und ihre SHA256 werden weiterhin geprüft. Ein wirklich fehlendes oder verändertes Backup bleibt gesperrt.
-
-Die Fortsetzung erfolgt wie gewohnt über `00_setup.bat` beziehungsweise `bash 00_setup.sh`. Runtime, vorhandene PC-Backups und Packages beim Aktualisieren behalten.
-
-## Uhr folgt der Fire-TV-Zeitzone
-
-Phase 04 installiert nun `Emotn-System-Clock.apk` statt der festen Berlin-Uhr. Der Helper liest `persist.sys.timezone` bei jeder Zeitzonenabfrage, reagiert auf Android-Zeitzonenänderungen und aktualisiert den Launcher im Vordergrund beziehungsweise bei der Rückkehr aus dem Hintergrund. Ist die Eigenschaft nicht verfügbar, wird die aktuelle Android-Standardzeitzone verwendet. Die Gerätezeitzone wird weder verändert noch vorgeschrieben. Die Wetterstadt bleibt unabhängig.
-
-Das neue Paket heißt `local.karat.emotnsystemclock`. Phase 04 entfernt ausschließlich den alten Helper `local.karat.emotnclock` und installiert den Ersatz. In Vector **Emotn System Clock** aktivieren und ausschließlich **Emotn UI** zuordnen. Ein neuer Scope-Checkpoint zeigt diese Abfrage auch beim Aktualisieren bestehender Installationen. Der Launcher wird zum Anwenden einmal neu gestartet; spätere Zeitzonenänderungen benötigen keinen erneuten Setup-Lauf.
-
-Die aktualisierte Uhr-APK ist direkt enthalten; für die Installation werden weder ein Helper-Quellcodeordner noch Bauwerkzeuge benötigt. Sie ist für Emotn UI 1.1.0.2 ausgelegt. APK-Signaturen und Offline-Verhalten wurden geprüft; ein Test auf einem echten Fire TV steht aus.
-
-## GhostLock: Auf betriebsbereiten Root-Dienst warten
-
-Die `ROOTED`-Markierung kann erscheinen, bevor su-Client und Root-Daemon bereit sind. Das Setup wartet nun auf ein tatsächliches `uid=0` und prüft sowohl `su` als auch `/data/local/tmp/su`. Ein noch fehlender Client (Exit 127) führt nicht sofort zum Abbruch. Für temporäre OTA-/Unlock-Befehle wird anschließend der geprüfte Client verwendet.
-
-Das Hauptskript kann `pending=ghostlock` fortsetzen. Zuerst wird ein vorhandener Root-Dienst geprüft. Ist er nicht verfügbar, verwirft ein geprüfter Neustart den temporären Versuch vor dem noch erlaubten Wiederholungsversuch. Das Limit von zwei Versuchen bleibt auch über Neustarts erhalten. Andere offene Schreibvorgänge werden nicht zurückgesetzt. Runtime, Backups und Packages beim Aktualisieren behalten; wie gewohnt `00_setup.bat` oder `bash 00_setup.sh` verwenden.
-
-Downloads zeigen einen Fortschrittsbalken mit Datenmenge, Prozentwert bei bekannter Dateigröße, Geschwindigkeit und vergangener Zeit. Ohne Größenangabe wird die empfangene Datenmenge angezeigt. Lokale APK-Installationen zeigen einen animierten Aktivitätsbalken bis ADB fertig ist; Android liefert keinen Installations-Prozentwert. Store-Downloads sind auf dem Fernseher sichtbar. Vor der microG-Selbstprüfung öffnet das Skript die microG-Einstellungen automatisch; dort Selbstprüfung wählen.
-
-WLAN wird am Ende von Phase 1 wieder aktiviert, sobald beide OTA-Update-Pakete als deaktiviert bestätigt sind. Phase 2 prüft diese erneut und aktiviert WLAN, wenn Android nach Post-OTA wieder gestartet ist, auch bei Wiederaufnahme. In TWRP wird WLAN nicht verändert. Falls die Aktivierung scheitert, erscheint eine deutliche Warnung und die Einrichtung geht weiter; die Verbindung nutzt die bereits auf dem Stick gespeicherten Netzwerkeinstellungen.
-
-Phase 3 prüft Magisks integriertes Zygisk automatisch. Ist es ausgeschaltet (Standard auf echten Geräten), geht es ohne Öffnen von Magisk oder RESUME-Abfrage weiter. Nur bei aktivierter Einstellung öffnet das Skript Magisk, fordert zum Deaktivieren auf, prüft erneut und startet vor der Framework-Installation neu.
+Vor Weitergabe oder GitHub-Upload Runtime, Backups, Konten und persönliche Konfiguration ausschließen. Drittanbieter-APKs, Firmware und Helper behalten ihre jeweiligen Lizenz- und Weitergabebedingungen; ihre Nutzung im lokalen Setup erteilt keine Weitergaberechte. Im teilbaren Paket sind kein persönlicher Ort, kein Konto und kein Gerätezustand voreingestellt.

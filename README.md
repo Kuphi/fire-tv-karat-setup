@@ -27,6 +27,8 @@ No personal logs, checkpoints, serial numbers, backups, accounts or VPN configur
 
 ## Optional firmware update: U
 
+! If you have version 8.1.5.8 it is recommended to update. Otherwise your settings screen will not show the upper row, due to the ad banner being removed !
+
 Options **1–5** remain unchanged. Choose **ALL U** to include Fire OS **8.1.8.2**: the firmware update is integrated into phase 2, before Google/microG. Firmware, Post-OTA and Magisk are flashed in one TWRP session. **U** also works on its own. Previously active Vector/microG modules are restored only after Magisk preinit and verifier checks. Restart the same main menu to resume.
 
 See [UPDATE.md](UPDATE.md) for the sequence, checkpoints, firmware hash and validation limits. Preview: `bash 00_setup.sh --preview-only --steps "ALL U"` (Windows: `00_setup.bat` with the same arguments).

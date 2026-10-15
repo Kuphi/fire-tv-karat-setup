@@ -1,0 +1,122 @@
+[
+  {
+    "name": "amonet-karat-v1.3.0.zip",
+    "path": "packages/root/amonet-karat-v1.3.0.zip",
+    "url": "https://xdaforums.com/attachments/amonet-karat-v1-3-0-zip.6377986/",
+    "sha256": "2724ce2515fe37a80112d0c39f36b172a2bb8c23ca742313c17e2866982f5e02",
+    "included": false
+  },
+  {
+    "name": "ghostlock-karat-v1.0.4.zip",
+    "path": "packages/root/ghostlock-karat-v1.0.4.zip",
+    "url": "https://xdaforums.com/attachments/ghostlock-karat-v1-0-4-zip.6386789/",
+    "sha256": "b1df5a99c9ca9266be90a02eee62ba717f2cdc8850adf8b7a14fadf091c6532e",
+    "included": false
+  },
+  {
+    "name": "post-ota-karat-v1.0.0.zip",
+    "path": "packages/root/post-ota-karat-v1.0.0.zip",
+    "url": "https://xdaforums.com/attachments/post-ota-karat-v1-0-0-zip.6379480/",
+    "sha256": "41ef08753be13b47d08644a7a23767988d8b5a35607e960d5ee6dc8a5cc86159",
+    "included": false
+  },
+  {
+    "name": "Magisk-v30.7.apk",
+    "path": "packages/root/Magisk-v30.7.apk",
+    "url": "https://github.com/topjohnwu/Magisk/releases/download/v30.7/Magisk-v30.7.apk",
+    "sha256": null,
+    "included": false
+  },
+  {
+    "name": "EmotnUI.apk",
+    "path": "packages/emotn/EmotnUI.apk",
+    "url": "https://zmautoapp.dangsfly.com/20260711/6a51fff5b0db3.apke8f2.apk",
+    "sha256": "ef634633cccb26e8d2beabac37e411f4ca23ce873180d0707274f9e84a7e1610",
+    "included": false
+  },
+  {
+    "name": "google-play/zygisk-next.zip",
+    "path": "packages/google-play/zygisk-next.zip",
+    "url": "https://github.com/LSPosed/ZygiskNext/releases/download/1.5.0/Zygisk-Next-1.5.0-843-5217106-release.zip",
+    "sha256": "474d58abc208c0779e7f8f1d8449db755a874d475c13b9cf8decf74bc171933b",
+    "included": false
+  },
+  {
+    "name": "google-play/vector.zip",
+    "path": "packages/google-play/vector.zip",
+    "url": "https://github.com/JingMatrix/Vector/releases/download/v2.2/Vector-v2.2-3080-Release.zip",
+    "sha256": "9ee8323575d615f7b3f1076ff60b2a63a49390ef11881b52632311a37f6f79cc",
+    "included": false
+  },
+  {
+    "name": "google-play/fakegapps.apk",
+    "path": "packages/google-play/fakegapps.apk",
+    "url": "https://github.com/whew-inc/FakeGApps/releases/download/6.6/app-release.apk",
+    "sha256": null,
+    "included": false
+  },
+  {
+    "name": "google-play/microg.apk",
+    "path": "packages/google-play/microg.apk",
+    "url": "https://github.com/microg/GmsCore/releases/download/v0.3.15.250932/com.google.android.gms-250932030.apk",
+    "sha256": null,
+    "included": false
+  },
+  {
+    "name": "google-play/play-store-tv.apk",
+    "path": "packages/google-play/play-store-tv.apk",
+    "url": "https://www.apkmirror.com/apk/google-inc/google-play-store-android-tv/google-play-store-android-tv-52-0-20-release/google-play-store-android-tv-52-0-20-24-8-pr-937697325-4-android-apk-download/",
+    "sha256": "16625b025c342c3badb63c60ba4158291863d21fa8bb7e6b16899144ab6037b6",
+    "included": false,
+    "manual_download_page": "https://www.apkmirror.com/apk/google-inc/google-play-store-android-tv/google-play-store-android-tv-52-0-20-release/google-play-store-android-tv-52-0-20-24-8-pr-937697325-4-android-apk-download/"
+  },
+  {
+    "name": "google-play/microg-installer.zip",
+    "path": "packages/google-play/microg-installer.zip",
+    "url": "https://github.com/spacealtctrl/microg_installer_revived_again/releases/download/v1.1.2/microg_installer_revived_again-v1.1.2.zip",
+    "sha256": null,
+    "included": false
+  },
+  {
+    "name": "Amazon-Appstore-Direct.apk",
+    "path": "packages/emotn/helpers/Amazon-Appstore-Direct.apk",
+    "url": null,
+    "sha256": "1019cbf9644e4dd33fd04874b8058e640c2cdb976a92a83e37d78725a74ada9a",
+    "included": true
+  },
+  {
+    "name": "FireTV-Settings-Bridge.apk",
+    "path": "packages/emotn/helpers/FireTV-Settings-Bridge.apk",
+    "url": null,
+    "sha256": "79820e925dd747cf37f57ee31c3e6f981792f421cc1afb1e5043bafd1afb4878",
+    "included": true
+  },
+  {
+    "name": "Emotn-System-Clock.apk",
+    "path": "packages/emotn/helpers/Emotn-System-Clock.apk",
+    "url": null,
+    "sha256": "7d8277c267f104e0b5754c176f4379ab99dd861876fd94a77b1089b4da62b793",
+    "included": true
+  },
+  {
+    "name": "Emotn-Idle-Timer.apk",
+    "path": "packages/emotn/helpers/Emotn-Idle-Timer.apk",
+    "url": null,
+    "sha256": "81966add6f9ffbd4515507471b75f0098cdf965974bc4276253f154a5115cba6",
+    "included": true
+  },
+  {
+    "name": "Emotn-App-Categories.apk",
+    "path": "packages/emotn/helpers/Emotn-App-Categories.apk",
+    "url": null,
+    "sha256": "bb8be35be40ea9d7a29bd67b846ff8ad897a5f48fdb0a11917fc18840e914f9d",
+    "included": true
+  },
+  {
+    "name": "FireOS-8.1.8.2.zip",
+    "path": "packages/root/FireOS-8.1.8.2.zip",
+    "url": "https://d1s31zyz7dcc2d.cloudfront.prod.ota-cloudfront.net/2026/8/17/6b5b010d-ab55-4b17-8247-6870c688776e/update-kindle-karat-RS8182_user_3811_0032548774788.bin",
+    "sha256": "559cddbc9e57fa786b396aa4939b54fcb8ff85c789f0ef55df9b0ed4138c7578",
+    "included": false
+  }
+]

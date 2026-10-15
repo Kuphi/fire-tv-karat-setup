@@ -1,0 +1,9 @@
+2026-10-14
+156 offline Python tests passed.
+ROOTED-before-su readiness race reproduced and fixed.
+Standard/local su selection and command routing tested.
+Pending GhostLock reuses existing root or resets only after verified reboot.
+Two-attempt limit survives restart; failed reboot and other pending writes remain protected.
+Existing bilingual, backup, verifier and system-clock regressions passed.
+No physical Fire TV or native Windows hardware tests.
+Personal logs and device identifiers are excluded.
